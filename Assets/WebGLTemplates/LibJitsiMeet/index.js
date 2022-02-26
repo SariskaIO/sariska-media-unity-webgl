@@ -1,13 +1,3 @@
-const options = {
-  hosts: {
-    domain: 'YOURSTACKNAME.onavstack.net',
-    muc: 'conference.YOURSTACKNAME.onavstack.net',
-    focus: 'focus@auth.YOURSTACKNAME.onavstack.net/focus',
-  },
-  serviceUrl: 'wss://YOURSTACKNAME.onavstack.net/YOURSTACKNAME/xmpp-websocket',
-  openBridgeChannel: 'websocket',
-  resolution: 180,
-};
 
 const conferenceName = 'unity-demo';
 
@@ -89,11 +79,11 @@ function onUserLeft(id) {
 }
 
 function onConnectionSuccess() {
-  room = connection.initJitsiConference(conferenceName, options);
-  room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
-  room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-  room.on(JitsiMeetJS.events.conference.USER_JOINED, id => { remoteTracks[id] = []; });
-  room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
+  room = connection.initJitsiConference();
+  room.on(SariskaMediaTransport.events.conference.TRACK_ADDED, onRemoteTrack);
+  room.on(SariskaMediaTransport.events.conference.CONFERENCE_JOINED, onConferenceJoined);
+  room.on(SariskaMediaTransport.events.conference.USER_JOINED, id => { remoteTracks[id] = []; });
+  room.on(SariskaMediaTransport.events.conference.USER_LEFT, onUserLeft);
   room.join();
 }
 
@@ -105,12 +95,37 @@ function unload() {
   connection.disconnect();
 }
 
-function connect() {
-  JitsiMeetJS.init(options);
-  connection = new JitsiMeetJS.JitsiConnection(null, null, options);
-  connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+async function connect() {
+    let token;
+
+    const body = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            apiKey: `27fd6f8080d512442a3694f461adb3986cda5ba39dbe368d75`,
+        })
+    };
+
+    try {
+        const response = await fetch(GENERATE_TOKEN_URL, body);
+        if (response.ok) {
+            const json = await response.json();
+            token =  json.token;
+        } else {
+          console.log("could not fetch token!!!");
+          return; 
+        }
+    } catch (error) {
+        console.log('error', error);
+    }
+
+  SariskaMediaTransport.init(options);
+  connection = new SariskaMediaTransport.JitsiConnection(token, conferenceName);
+  connection.addEventListener(SariskaMediaTransport.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
   connection.connect();
-  JitsiMeetJS.createLocalTracks({devices: ["audio", "video"]})
+  SariskaMediaTransport.createLocalTracks({devices: ["audio", "video"]})
     .then(onLocalTracks);
 }
 
