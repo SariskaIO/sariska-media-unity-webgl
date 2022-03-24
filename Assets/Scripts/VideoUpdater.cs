@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 public class VideoUpdater : MonoBehaviour
 {
     private Texture2D texture;
-    private int textureId = 0;
+    private int textureId;
 
     [DllImport("__Internal")]
     private static extern void UpdateTextureFromVideoElement(int textureId);
@@ -26,7 +26,8 @@ public class VideoUpdater : MonoBehaviour
     }
 
     void Update() {
-        if (textureId == 0) {
+        if (textureId == 0)
+        {
             textureId = texture.GetNativeTextureID();
         }
         UpdateTextureFromVideoElement(textureId);
