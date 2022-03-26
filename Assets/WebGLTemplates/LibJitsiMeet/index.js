@@ -10,38 +10,24 @@ let remoteTracks = {};
 
 function onLocalTracks(tracks) {
   localTracks = tracks;
-  console.log(localTracks.length )
+  console.log("Length of a localtrack: "+ localTracks.length )
   if (isJoined) {
     for (let i = 0; i < localTracks.length; i++) {
       room.addTrack(localTracks[i]);
     }
   }
+
 }
 
-const connectionConfig = {
-  hosts: {
-      domain: 'sariska.io',
-      muc: 'muc.sariska.io'
-  },
-  serviceUrl: 'wss://api.sariska.io/api/v1/media/websocket',
-  clientNode: 'https://www.sariska.io',
-  // enableLipSync - (optional) boolean property which enables the lipsync feature. Currently works only in Chrome and is disabled by default.
-};
-
 function onRemoteTrack(track) {
-  console.log("We at RemoteTrack");
   if (track.isLocal()) {
     return;
   }
-
-  console.log("We at RemoteTrack");
   const participantId = track.getParticipantId();
-  console.log("participant ID:" + participantId);
   if (!remoteTracks[participantId]) {
     remoteTracks[participantId] = [];
   }
   remoteTracks[participantId].push(track);
-  console.log("Adding Remote Track");
   if (track.getType() == 'video') {
     // Video elements just get stored, they're accessed from Unity.
     
