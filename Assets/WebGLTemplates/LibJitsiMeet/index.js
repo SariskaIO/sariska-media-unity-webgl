@@ -16,7 +16,19 @@ function onLocalTracks(tracks) {
       room.addTrack(localTracks[i]);
     }
   }
-
+  console.log("We at local tracks");
+  for(var i=0;i<tracks.length;i++){
+    if (tracks[i].getType() == 'video') {
+      console.log("We at local tracks");
+    const key = "local";
+    window.videoElements[key] = document.createElement('video');
+    window.videoElements[key].autoplay = true;
+    tracks[i].attach(window.videoElements[key]);
+    console.log(tracks[i].getId() + "Track ID");
+    console.log("Added Local Track");
+    }
+  }
+  
 }
 
 function onRemoteTrack(track) {
@@ -45,6 +57,7 @@ function onRemoteTrack(track) {
     document.body.appendChild(audioElement);
     track.attach(audioElement);
   }
+  
 }
 
 function onConferenceJoined() {
