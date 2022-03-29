@@ -15,8 +15,6 @@ mergeInto(LibraryManager.library, {
       console.log("no texture for id: " + textureId);
       return;
     }
-    console.log("videoElement.videoHeight" + videoElement.videoHeight);
-    console.log("videoElement.videoWidth" + videoElement.videoWidth);
     GLctx.bindTexture(GLctx.TEXTURE_2D, texture);
     
     GLctx.texSubImage2D(
@@ -30,6 +28,5 @@ mergeInto(LibraryManager.library, {
       GLctx.UNSIGNED_BYTE,
       videoElement
     );
-    console.log("We are in videoUpdater.jslib");
   }
 });

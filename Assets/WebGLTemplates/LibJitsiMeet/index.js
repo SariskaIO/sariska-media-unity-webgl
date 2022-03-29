@@ -10,22 +10,17 @@ let remoteTracks = {};
 
 function onLocalTracks(tracks) {
   localTracks = tracks;
-  console.log("Length of a localtrack: "+ localTracks.length )
   if (isJoined) {
     for (let i = 0; i < localTracks.length; i++) {
       room.addTrack(localTracks[i]);
     }
   }
-  console.log("We at local tracks");
   for(var i=0;i<tracks.length;i++){
     if (tracks[i].getType() == 'video') {
-      console.log("We at local tracks");
     const key = "local";
     window.videoElements[key] = document.createElement('video');
     window.videoElements[key].autoplay = true;
     tracks[i].attach(window.videoElements[key]);
-    console.log(tracks[i].getId() + "Track ID");
-    console.log("Added Local Track");
     }
   }
   
@@ -47,7 +42,6 @@ function onRemoteTrack(track) {
     window.videoElements[key] = document.createElement('video');
     window.videoElements[key].autoplay = true;
     track.attach(window.videoElements[key]);
-    console.log("Added Remote Track");
   }
   else {
     // Audio elements get added to the DOM (can be made invisible with CSS) so that the audio plays back.
@@ -98,8 +92,6 @@ function onConnectionSuccess() {
   room.on(SariskaMediaTransport.events.conference.USER_JOINED, id => { remoteTracks[id] = []; });
   room.on(SariskaMediaTransport.events.conference.USER_LEFT, onUserLeft);
   room.join();
-  console.log("Room Joined");
-  console.log(room.myUserId());
 }
 
 function unload() {
@@ -149,7 +141,6 @@ async function connect() {
   connection.connect();
   SariskaMediaTransport.createLocalTracks({devices: ["audio", "video"]})
     .then(onLocalTracks);   
-    console.log("Created Local Tracks");
 }
 
 window.addEventListener('load', connect);
